@@ -4,11 +4,13 @@ REM Please share any improvements made!
 
 REM Folder where all links will end up
 set WARP_REPO=%USERPROFILE%\.warp
+set WARP_CURRENT=%WARP_REPO%\__CURRENT__
 REM Needed to calculate substring on command later on
 set WARP_COMMAND_ISSUED=%1
 
 IF [%1]==[/?] GOTO :help
 IF [%1]==[--help] GOTO :help
+IF [%1]==[] GOTO :current
 IF [%1]==[/create] GOTO :create
 IF [%1]==[/list] GOTO :list
 IF [%1]==[/remove] GOTO :remove
@@ -16,7 +18,13 @@ IF [%1]==[/window] GOTO :explorer
 IF [%WARP_COMMAND_ISSUED:~0,1%]==[/] GOTO :unknowncommand
 
 set /p WARP_DIR=<%WARP_REPO%\%1
-cd %WARP_DIR%
+pushd %WARP_DIR%
+echo %cd% > %WARP_CURRENT%
+GOTO :end
+
+:current
+set /p WARP_DIR=<%WARP_CURRENT%
+pushd %WARP_DIR%
 GOTO :end
 
 :explorer
@@ -40,11 +48,14 @@ ECHO Created bookmark "%2"
 GOTO :end
 
 :list
-dir %WARP_REPO% /B
+for %%f in (%WARP_REPO%\*) do (
+    set /p LOCATION=<%%f
+    echo %%~nf: %LOCATION%
+)
 GOTO :end
 
 :unknowncommand
-ECHO Unknown command: %1
+ECHO Unknown Warp command: %1
 GOTO :end
 
 :remove
