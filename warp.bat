@@ -1,5 +1,4 @@
 @ECHO OFF
-setlocal enabledelayedexpansion
 REM Source found on https://github.com/DieterDePaepe/windows-scripts
 REM Please share any improvements made!
 
@@ -50,8 +49,10 @@ GOTO :end
 
 :list
 for %%f in (%WARP_REPO%\*) do (
+    setlocal enabledelayedexpansion
     set /p LOCATION=<%%f
     echo %%~nf: !LOCATION!
+    endlocal
 )
 GOTO :end
 
