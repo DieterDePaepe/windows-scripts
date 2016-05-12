@@ -24,7 +24,7 @@ IF [%WARP_COMMAND_ISSUED:~0,1%]==[/] GOTO :unknowncommand
 
 REM Command: warp <bookmark>
 if not exist %WARP_REPO%\%1 (
-  ECHO Bookmark does not exist: %1
+  ECHO Bookmark does not exist: "%1".
   exit /b 1
 )
 set /p WARP_DIR=<%WARP_REPO%\%1
@@ -36,7 +36,7 @@ endlocal && pushd %WARP_DIR% && GOTO :eof
 
 :explorer
 IF [%2]==[] (
-  ECHO Missing name
+  ECHO Missing bookmark name.
   exit /b 1
 )
 set /p WARP_DIR=<%WARP_REPO%\%2
@@ -45,13 +45,13 @@ GOTO :eof
 
 :create
 IF [%2]==[] (
-  ECHO Missing name for bookmark
+  ECHO Missing bookmark name.
   exit /b 1
 )
 
 if not exist %WARP_REPO%\NUL mkdir %WARP_REPO%
 ECHO %cd% > %WARP_REPO%\%2
-ECHO Created bookmark "%2"
+ECHO Created bookmark "%2".
 GOTO :eof
 
 :list
@@ -66,16 +66,16 @@ setlocal disabledelayedexpansion
 GOTO :eof
 
 :unknowncommand
-ECHO Unknown Warp command: %1
+ECHO Unknown warp command: "%1".
 exit /b 1
 
 :remove
 IF [%2]==[] (
-  ECHO Missing name for bookmark
+  ECHO Missing bookmark name.
   exit /b 1
 )
 if not exist %WARP_REPO%\%2 (
-  ECHO Bookmark does not exist: %2
+  ECHO Bookmark does not exist: "%2".
   exit /b 1
 )
 del %WARP_REPO%\%2
@@ -84,11 +84,11 @@ GOTO :eof
 :help
 ECHO Create or navigate to folder bookmarks.
 ECHO.
-ECHO   warp /?			Display this help
-ECHO   warp [bookmark]		Navigate to existing bookmark
-ECHO   warp				Navigate to last visited bookmark
-ECHO   warp /create [bookmark]	Navigate to existing bookmark
-ECHO   warp /list			List existing bookmarks
-ECHO   warp /remove [bookmark]	Remove an existing bookmark
-ECHO   warp /window [bookmark]	Open an existing bookmark in explorer
+ECHO   warp /?			Display this help.
+ECHO   warp [bookmark]		Navigate to an existing bookmark.
+ECHO   warp				Navigate to last visited bookmark.
+ECHO   warp /create [bookmark]	Create a new bookmark with the given name.
+ECHO   warp /list			List existing bookmarks.
+ECHO   warp /remove [bookmark]	Remove an existing bookmark.
+ECHO   warp /window [bookmark]	Open an existing bookmark in explorer.
 ECHO.
