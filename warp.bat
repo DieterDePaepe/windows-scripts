@@ -9,6 +9,7 @@ REM Needed to calculate substring on command later on
 set WARP_COMMAND_ISSUED=%1
 
 IF [%1]==[/?] GOTO :help
+IF [%1]==[/help] GOTO :help
 IF [%1]==[--help] GOTO :help
 IF [%1]==[] GOTO :current
 IF [%1]==[/create] GOTO :create
@@ -51,6 +52,7 @@ GOTO :end
 for %%f in (%WARP_REPO%\*) do (
     setlocal enabledelayedexpansion
     set /p LOCATION=<%%f
+	REM %%~nf = filename of loop variable %%f
     echo %%~nf: !LOCATION!
     endlocal
 )
@@ -77,6 +79,7 @@ ECHO Create or navigate to folder bookmarks.
 ECHO.
 ECHO   warp /?			Display this help
 ECHO   warp [bookmark]		Navigate to existing bookmark
+ECHO   warp				Navigate to last visited bookmark
 ECHO   warp /create [bookmark]	Navigate to existing bookmark
 ECHO   warp /list			List existing bookmarks
 ECHO   warp /remove [bookmark]	Remove an existing bookmark

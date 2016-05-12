@@ -12,3 +12,12 @@ A folder bookmarker for use in the terminal.
     c:\Users\Public>warp temp     # Go to the stored bookmark
     c:\Temp>
 
+Every warp uses a `pushd` command, so you can trace back your steps using `popd`.
+
+    c:\Users\Public>warp temp
+    c:\Temp>popd
+    c:\Users\Public>
+
+Open a folder of a bookmark in explorer using `warp /window <bookmark>`.
+
+List all available options using `warp /?`.
