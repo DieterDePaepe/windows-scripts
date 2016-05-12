@@ -2,6 +2,9 @@
 REM Source found on https://github.com/DieterDePaepe/windows-scripts
 REM Please share any improvements made!
 
+REM Prevent environment variable pollution
+setlocal
+
 REM Folder where all links will end up
 set WARP_REPO=%USERPROFILE%\.warp
 set WARP_CURRENT=%WARP_REPO%\__CURRENT__
@@ -18,15 +21,13 @@ IF [%1]==[/remove] GOTO :remove
 IF [%1]==[/window] GOTO :explorer
 IF [%WARP_COMMAND_ISSUED:~0,1%]==[/] GOTO :unknowncommand
 
+REM Command: warp <bookmark>
 set /p WARP_DIR=<%WARP_REPO%\%1
-pushd %WARP_DIR%
-echo %cd% > %WARP_CURRENT%
-GOTO :end
+endlocal && pushd %WARP_DIR% && echo %WARP_DIR% > %WARP_CURRENT% && GOTO :end
 
 :current
 set /p WARP_DIR=<%WARP_CURRENT%
-pushd %WARP_DIR%
-GOTO :end
+endlocal && pushd %WARP_DIR% && GOTO :end
 
 :explorer
 IF [%2]==[] (
@@ -49,13 +50,14 @@ ECHO Created bookmark "%2"
 GOTO :end
 
 :list
+REM Delayed expansion needed to change variable inside the loop.
+setlocal enabledelayedexpansion
 for %%f in (%WARP_REPO%\*) do (
-    setlocal enabledelayedexpansion
     set /p LOCATION=<%%f
 	REM %%~nf = filename of loop variable %%f
     echo %%~nf: !LOCATION!
-    endlocal
 )
+setlocal disabledelayedexpansion
 GOTO :end
 
 :unknowncommand
