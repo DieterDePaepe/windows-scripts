@@ -7,14 +7,15 @@ setlocal
 
 REM Folder where all links will end up
 set WARP_REPO=%USERPROFILE%\.warp
-set WARP_CURRENT=%WARP_REPO%\__CURRENT__
+REM Special bookmark that keeps track of last visited warping location
+set WARP_LAST_VISITED=%WARP_REPO%\__LAST_VISITED__
 REM Needed to calculate substring on command later on
 set WARP_COMMAND_ISSUED=%1
 
 IF [%1]==[/?] GOTO :help
 IF [%1]==[/help] GOTO :help
 IF [%1]==[--help] GOTO :help
-IF [%1]==[] GOTO :current
+IF [%1]==[] GOTO :last_visited
 IF [%1]==[/create] GOTO :create
 IF [%1]==[/list] GOTO :list
 IF [%1]==[/remove] GOTO :remove
@@ -27,10 +28,10 @@ if not exist %WARP_REPO%\%1 (
   exit /b 1
 )
 set /p WARP_DIR=<%WARP_REPO%\%1
-endlocal && pushd %WARP_DIR% && echo %WARP_DIR% > %WARP_CURRENT% && GOTO :eof
+endlocal && pushd %WARP_DIR% && echo %WARP_DIR% > %WARP_LAST_VISITED% && GOTO :eof
 
-:current
-set /p WARP_DIR=<%WARP_CURRENT%
+:last_visited
+set /p WARP_DIR=<%WARP_LAST_VISITED%
 endlocal && pushd %WARP_DIR% && GOTO :eof
 
 :explorer
