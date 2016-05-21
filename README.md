@@ -21,3 +21,8 @@ Every warp uses a `pushd` command, so you can trace back your steps using `popd`
 Open a folder of a bookmark in explorer using `warp /window <bookmark>`.
 
 List all available options using `warp /?`.
+
+## RefreshEnv
+Refresh the environment variables in the terminal. Handy when you updated an environment variable (such as `PATH`), but don't want to restart the terminal.
+
+    c:\>refreshEnv
