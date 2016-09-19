@@ -1,0 +1,1 @@
+@curl -H "Accept: application/ld+json" %*
