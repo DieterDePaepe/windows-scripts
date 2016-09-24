@@ -26,3 +26,11 @@ List all available options using `warp /?`.
 Refresh the environment variables in the terminal. Handy when you updated an environment variable (such as `PATH`), but don't want to restart the terminal.
 
     c:\>refreshEnv
+
+## AddToPath
+Adds a folder to the `PATH` of the current terminal. This change is not persisted in the `PATH` environment variable.
+
+    # The following examples all add c:\Temp to the local PATH:
+    c:\Temp>addToPath          # Add current folder
+    c:\>addToPath Temp         # Add a relative path
+    c:\>addToPath c:\Temp      # Add an absolute path  
