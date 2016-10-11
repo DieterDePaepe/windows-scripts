@@ -33,16 +33,16 @@ IF EXIST %TEMP%\__refreshEnvironment.bat (
   EXIT /b 1
 )
 
-REM Read the system environment variables from the registry.
+REM Read the system environment variables from the registry except PATH (see below) and USERNAME (to avoid the value 'SYSTEM' replacing the real USERNAME)
 FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment"`) DO (
   REM /I -> ignore casing, since PATH may also be called Path
-  IF /I NOT [%%I]==[PATH] (
+  IF /I NOT [%%I]==[PATH] IF /I NOT [%%I]==[USERNAME] (
     ECHO SET %%I=%%K>>%TEMP%\__refreshEnvironment.bat
   )
 )
 
-REM Read the user environment variables from the registry.
-FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY HKCU\Environment`) DO (
+REM Read the user environment variables from the registry except PATH (see below).
+FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKCU\Environment"`) DO (
   REM /I -> ignore casing, since PATH may also be called Path
   IF /I NOT [%%I]==[PATH] (
     ECHO SET %%I=%%K>>%TEMP%\__refreshEnvironment.bat
@@ -51,18 +51,24 @@ FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY HKCU\Environment`) DO (
 
 REM PATH is a special variable: it is automatically merged based on the values in the
 REM system and user variables.
-REM Read the PATH variable from the system and user environment variables.
-FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v PATH`) DO (
+REM Read the PATH variable from the system environment variables.
+FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v "PATH"`) DO (
   ECHO SET PATH=%%K>>%TEMP%\__refreshEnvironment.bat
 )
-FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY HKCU\Environment /v PATH`) DO (
-  ECHO SET PATH=%%PATH%%;%%K>>%TEMP%\__refreshEnvironment.bat
+
+REM Read the PATH variable from the user environment variables.
+REM Testing the result of the query to avoid error message (the variable PATH for CURRENT USER may not be present).
+REG QUERY "HKCU\Environment" /v "PATH" >NUL 2>&1
+if "%errorlevel%"=="0" (
+	FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKCU\Environment" /v "PATH"`) DO (
+		ECHO SET PATH=%%PATH%%;%%K>>%TEMP%\__refreshEnvironment.bat
+	)
 )
 
 REM Load the variable definitions from our temporary file.
 CALL %TEMP%\__refreshEnvironment.bat
 
 REM Clean up after ourselves.
-DEL /Q %TEMP%\__refreshEnvironment.bat
+DEL /F /Q %TEMP%\__refreshEnvironment.bat >NUL 2>&1
 
 ECHO Environment successfully refreshed.
