@@ -60,9 +60,9 @@ REM Read the PATH variable from the user environment variables.
 REM Testing the result of the query to avoid error message (the variable PATH for CURRENT USER may not be present).
 REG QUERY "HKCU\Environment" /v "PATH" >NUL 2>&1
 if "%errorlevel%"=="0" (
-	FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKCU\Environment" /v "PATH"`) DO (
-		ECHO SET PATH=%%PATH%%;%%K>>%TEMP%\__refreshEnvironment.bat
-	)
+  FOR /F "usebackq tokens=1,2,* skip=2" %%I IN (`REG QUERY "HKCU\Environment" /v "PATH"`) DO (
+    ECHO SET PATH=%%PATH%%;%%K>>%TEMP%\__refreshEnvironment.bat
+  )
 )
 
 REM Load the variable definitions from our temporary file.
