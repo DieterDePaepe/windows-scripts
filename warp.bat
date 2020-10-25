@@ -16,6 +16,7 @@ IF [%1]==[/?] GOTO :help
 IF [%1]==[/help] GOTO :help
 IF [%1]==[--help] GOTO :help
 IF [%1]==[] GOTO :last_visited
+IF [%1]==[/i] GOTO :input
 IF [%1]==[/create] GOTO :create
 IF [%1]==[/list] GOTO :list
 IF [%1]==[/remove] GOTO :remove
@@ -33,6 +34,29 @@ endlocal && pushd %WARP_DIR% && echo %WARP_DIR% > %WARP_LAST_VISITED% && GOTO :e
 :last_visited
 set /p WARP_DIR=<%WARP_LAST_VISITED%
 endlocal && pushd %WARP_DIR% && GOTO :eof
+
+:input
+setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
+set COUNTER=0
+set FILES=
+for %%f in (%WARP_REPO%\*) do (
+    set /p LOCATION=<%%f
+    set FILES=!FILES!;%%~nf
+	  REM %%~nf = filename of loop variable %%f
+	  set /A COUNTER+=1
+    echo [!COUNTER!] %%~nf: !LOCATION!
+)
+echo [e] Exit
+
+set /p SELECTED=Select []:
+IF [%SELECTED%]==[e] (
+	GOTO :eof
+)
+endlocal && set SELECTED=%SELECTED% && set FILES=%FILES%
+
+FOR /f "tokens=%SELECTED% delims=;" %%a IN ("%FILES%") do set /p WARP_DIR=<%WARP_REPO%\%%a
+
+endlocal && pushd %WARP_DIR% && echo %WARP_DIR% > %WARP_LAST_VISITED% && GOTO :eof
 
 :explorer
 IF [%2]==[] (
@@ -87,6 +111,7 @@ ECHO.
 ECHO   warp /?			Display this help.
 ECHO   warp [bookmark]		Navigate to an existing bookmark.
 ECHO   warp				Navigate to last visited bookmark.
+ECHO   warp /i			Open interactive mode.
 ECHO   warp /create [bookmark]	Create a new bookmark with the given name.
 ECHO   warp /list			List existing bookmarks.
 ECHO   warp /remove [bookmark]	Remove an existing bookmark.
